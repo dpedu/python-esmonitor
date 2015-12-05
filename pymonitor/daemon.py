@@ -28,11 +28,17 @@ class MonitorDaemon(Thread):
         logger.info("path %s" % checkerPath)
         
         # Create/start all monitoring threads
-        logger.info("starting monitor threads")
+        logger.info("creating monitor threads")
         for instance in self.config["monitors"]:
             monitor_thread = MonitorThread(instance, self.backend)
-            monitor_thread.start()
             self.threads.append(monitor_thread)
+            self.backend.mapping.update(monitor_thread.mapping)
+        
+        self.backend.connect()
+        
+        logger.info("starting monitor threads")
+        for monitor_thread in self.threads:
+            monitor_thread.start()
         
         # Tear down all threads
         logger.info("joining monitor threads")
@@ -54,14 +60,18 @@ class Backend:
         """
         Init elasticsearch client
         """
+        self.es_url = es_url
+        self.mapping = {}
         self.logger = logging.getLogger("monitordaemon.backend")
         
         self.sysinfo = {}
         self.update_sys_info()
         logger.info("running on %(hostname)s (%(ipaddr)s)" % self.sysinfo)
-        
-        self.logger.info("connecting to backend at %s" % es_url)
-        self.es = Elasticsearch([es_url])
+    
+    def connect(self):
+        self.logger.info("final mapping %s" % self.mapping)
+        self.logger.info("connecting to backend at %s" % self.es_url)
+        self.es = Elasticsearch([self.es_url])
         self.logger.info("connected to backend")
         self.current_index = ""
         self.check_before_entry()
@@ -84,8 +94,20 @@ class Backend:
         Check if current index exists, and if not, create it
         """
         if not self.es.indices.exists(index=indexName):
-            self.logger.info("creating index %s" % indexName)
-            self.es.indices.create(index=indexName, ignore=400) # ignore already exists error
+            mapping = {
+                "mappings": {
+                    "_default_":{
+                        "properties": {
+                            "ipaddr": {
+                                "type": "ip"
+                            }
+                        }
+                    }
+                }
+            }
+            mapping["mappings"].update(self.mapping)
+            self.logger.info("creating index %s with mapping %s" % (indexName, mapping))
+            self.es.indices.create(index=indexName, ignore=400, body=mapping)# ignore already exists error
         self.current_index = indexName
     
     def check_before_entry(self):
@@ -125,6 +147,13 @@ class MonitorThread(Thread):
         self.logger.info("importing %s" % self.config["type"])
         self.checker_func = getattr(__import__(self.config["type"]), self.config["type"])
         self.logger.info("checker func %s" % self.checker_func)
+        
+        self.mapping = {}
+        #try:
+        self.mapping.update(__import__(self.config["type"]).mapping)
+        #except:
+        #    pass
+        self.logger.info("mapping %s" % self.mapping)
         
         self.alive = True
         self.delay = int(self.config["freq"])
