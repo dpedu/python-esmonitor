@@ -139,6 +139,7 @@ class MonitorThread(Thread):
             if time() - self.lastRun > self.delay:
                 self.lastRun = time()
                 self.execute(self.config["args"])
+            sleep(0.5)
         self.logger.info("scheduler exited")
     
     def execute(self, args):
