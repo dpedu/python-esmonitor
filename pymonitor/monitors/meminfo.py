@@ -14,7 +14,7 @@ computed_fields = {
 def meminfo(whitelist=[]):
     if not whitelist:
         whitelist = ["swaptotal", "swapfree", "swapcached", 
-                     "memtotal",  "memfree",  "memavailable", "cached", 
+                     "memtotal", "memfree", "cached", 
                      "active", "inactive", ]
         
     result = {}
