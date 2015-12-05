@@ -5,7 +5,7 @@
     "monitors": [
         {
             "type":"uptime",
-            "freq":"5",
+            "freq":"30",
             "args":{}
         }
     ]
