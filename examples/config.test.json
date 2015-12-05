@@ -12,6 +12,11 @@
             "type":"load",
             "freq":"30",
             "args":{}
+        },
+        {
+            "type":"meminfo",
+            "freq":"30",
+            "args":{}
         }
     ]
 }
