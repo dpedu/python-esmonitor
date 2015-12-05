@@ -5,6 +5,8 @@ memline_pattern = re.compile(r'^(?P<key>[^\\:]+)\:\s+(?P<value>[0-9]+)(\s(?P<uni
 computed_fields = {
     "mempctused": lambda items: round((items["memtotal"]-items["memfree"])/items["memtotal"], 2),
     "mempctfree": lambda items: 1-round((items["memtotal"]-items["memfree"])/items["memtotal"], 2),
+    "mempctused_nocache": lambda items: round((items["memtotal"]-items["memfree"]-items["cached"])/items["memtotal"], 2),
+    "mempctfree_nocache": lambda items: 1-round((items["memtotal"]-items["memfree"]-items["cached"])/items["memtotal"], 2),
     "swappctused": lambda items: round((items["swaptotal"]-items["swapfree"])/items["swaptotal"], 2),
     "swappctfree": lambda items: 1-round((items["swaptotal"]-items["swapfree"])/items["swaptotal"], 2)
 }
@@ -52,6 +54,8 @@ mapping = {
             "inactive":     { "type": "long" },
             "mempctused":   { "type": "double" },
             "mempctfree":   { "type": "double" },
+            "mempctused_nocache": { "type": "double" },
+            "mempctfree_nocache": { "type": "double" },
             "swappctused":  { "type": "double" },
             "swappctfree":  { "type": "double" }
         }
