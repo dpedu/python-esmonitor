@@ -1,0 +1,12 @@
+{
+    "backend": {
+        "url": "http://192.168.1.210:8297/"
+    },
+    "monitors": [
+        {
+            "type":"uptime",
+            "freq":"5",
+            "args":{}
+        }
+    ]
+}
