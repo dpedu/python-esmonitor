@@ -12,8 +12,8 @@ def diskspace(filesystems=[]):
             "disksize": stats.f_bsize * stats.f_blocks
         }
         
-        info["diskpctused"] = round(info["diskfree"]/info["disksize"], 2)
-        info["diskpctfree"] = round(info["diskused"]/info["disksize"], 2)
+        info["diskpctused"] = round(info["diskused"]/info["disksize"], 2)
+        info["diskpctfree"] = round(info["diskfree"]/info["disksize"], 2)
         
         yield info
 
