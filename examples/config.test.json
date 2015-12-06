@@ -22,6 +22,16 @@
             "type":"procs",
             "freq":"30",
             "args":{}
+        },
+        {
+            "type":"diskspace",
+            "freq":"30",
+            "args": {
+                "filesystems": [
+                    "/",
+                    "/var"
+                ]
+            }
         }
     ]
 }
