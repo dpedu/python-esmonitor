@@ -2,8 +2,6 @@ from glob import glob
 import re
 
 KTHREADD_PID = 2
-PAT_UID = re.compile(r'Uid:\s+(?P<uid>[0-9]+)\s')
-PAT_GID = re.compile(r'Gid:\s+(?P<gid>[0-9]+)\s')
 PAT_REMOVE_PROC_SPACES = re.compile(r'(\([^\)]+\))')
 
 def procs():
@@ -35,27 +33,20 @@ def procs():
     for f in glob('/proc/[0-9]*/stat'):
         try:
             with open(f, "r") as statfile:
-                with open(f+"us", "r") as statusfile:
-                    # Read stat info
-                    stat = statfile.read().strip()
-                    # Fix spaces in process names
-                    stat = PAT_REMOVE_PROC_SPACES.sub("PROCNAME", stat)
-                    stat = stat.split(" ")
-                    
-                    # Read uid/gid from status
-                    status = statusfile.read()
-                    
-                    proc_uid = PAT_UID.findall(status)
-                    proc_gid = PAT_GID.findall(status)
-                    
-                    proc_id = int(stat[0])
-                    proc_parent = int(stat[3])
-                    
-                    if proc_parent == KTHREADD_PID:
-                        num_kthreads+=1
-                    else:
-                        num_procs+=1
-                        num_threads += int(stat[19])
+                # Read stat info
+                stat = statfile.read().strip()
+                # Fix spaces in process names
+                stat = PAT_REMOVE_PROC_SPACES.sub("PROCNAME", stat)
+                stat = stat.split(" ")
+                
+                proc_id = int(stat[0])
+                proc_parent = int(stat[3])
+                
+                if proc_parent == KTHREADD_PID:
+                    num_kthreads+=1
+                else:
+                    num_procs+=1
+                    num_threads += int(stat[19])
         
         except Exception as e:
             print(e)
