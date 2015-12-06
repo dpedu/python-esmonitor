@@ -47,7 +47,5 @@ mapping = {
 }
 
 if __name__ == '__main__':
-    #avg = load()
-    #print(' '.join([avg["load_1m"], avg["load_5m"], avg["load_15m"]]))
     for item in diskspace(filesystems=["/", "/tmp/monitor"]):
         print(item)
