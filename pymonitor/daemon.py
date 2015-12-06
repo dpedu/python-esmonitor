@@ -175,9 +175,9 @@ class MonitorThread(Thread):
         """
         Run the loaded checker function
         """
-        result = self.checker_func(**args)
-        self.logger.info("result: %s" % (result,))
-        self.backend.add_data(self.config["type"], result)
+        for result in self.checker_func(**args):
+            self.logger.info("result: %s" % (result,))
+            self.backend.add_data(self.config["type"], result)
     
     def shutdown(self):
         """

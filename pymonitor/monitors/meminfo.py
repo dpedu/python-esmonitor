@@ -38,7 +38,7 @@ def meminfo(whitelist=[]):
         for key in computed_fields:
             result[key] = computed_fields[key](result)
     
-    return result
+    yield result
 
 mapping = {
     "meminfo": {
@@ -63,5 +63,6 @@ mapping = {
 }
 
 if __name__ == '__main__':
-    for k,v in meminfo().items():
-        print("%s: %s"%(k,v))
+    for item in meminfo():
+        for k,v in item.items():
+            print("%s: %s"%(k,v))

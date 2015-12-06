@@ -57,7 +57,7 @@ def procs():
             print(e)
             print("Failed to open %s" % f)
     
-    return {"procs": num_procs, "threads":num_threads, "kthreads": num_kthreads}
+    yield {"procs": num_procs, "threads":num_threads, "kthreads": num_kthreads}
 
 mapping = {
     "procs": {
@@ -76,5 +76,5 @@ mapping = {
 }
 
 if __name__ == '__main__':
-    stats = procs()
-    print("%s procs %s kthreads %s threads" % (stats["procs"], stats["kthreads"], stats["threads"]))
+    for stats in procs():
+        print("%s procs %s kthreads %s threads" % (stats["procs"], stats["kthreads"], stats["threads"]))
