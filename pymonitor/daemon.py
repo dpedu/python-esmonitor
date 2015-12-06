@@ -106,7 +106,7 @@ class Backend:
                 }
             }
             mapping["mappings"].update(self.mapping)
-            self.logger.info("creating index %s with mapping %s" % (indexName, mapping))
+            self.logger.info("creating index %s with mapping %s" % (indexName, json.dumps(mapping, indent=4)))
             self.es.indices.create(index=indexName, ignore=400, body=mapping)# ignore already exists error
         self.current_index = indexName
     

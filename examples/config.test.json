@@ -17,6 +17,11 @@
             "type":"meminfo",
             "freq":"30",
             "args":{}
+        },
+        {
+            "type":"procs",
+            "freq":"30",
+            "args":{}
         }
     ]
 }
