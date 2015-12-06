@@ -6,6 +6,7 @@ def diskspace(filesystems=[]):
         
         info = {
             "fs": fs,
+            "fs.raw": fs,
             "diskfree": stats.f_bsize * stats.f_bavail,
             "diskused": (stats.f_blocks-stats.f_bavail) * stats.f_bsize,
             "disksize": stats.f_bsize * stats.f_blocks
@@ -36,6 +37,10 @@ mapping = {
             },
             "fs": {
                 "type": "string"
+            },
+            "fs.raw": {
+                "type" : "string",
+                "index" : "not_analyzed"
             }
         }
     }
