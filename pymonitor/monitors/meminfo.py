@@ -41,7 +41,7 @@ def meminfo(whitelist=[]):
     return result
 
 mapping = {
-    "load": {
+    "meminfo": {
         "properties": {
             "swaptotal":    { "type": "long" },
             "swapfree":     { "type": "long" },
