@@ -1,0 +1,6 @@
+#!/usr/bin/env python3
+
+from pymonitor import daemon
+
+if __name__ == "__main__":
+    daemon.run_cli()

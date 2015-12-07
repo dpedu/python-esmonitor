@@ -1,3 +1,6 @@
 *.pyc
 __pycache__
 examples/config.test.json
+build
+dist
+pymonitor.egg-info

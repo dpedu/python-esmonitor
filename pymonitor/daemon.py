@@ -66,7 +66,7 @@ class Backend:
         
         self.sysinfo = {}
         self.update_sys_info()
-        logger.info("running on %(hostname)s (%(ipaddr)s)" % self.sysinfo)
+        self.logger.info("running on %(hostname)s (%(ipaddr)s)" % self.sysinfo)
     
     def connect(self):
         self.logger.info("final mapping %s" % self.mapping)
@@ -194,7 +194,7 @@ class MonitorThread(Thread):
         self.logger.info("cancelling scheduler")
         self.alive=False
 
-if __name__ == '__main__':
+def run_cli():
     from optparse import OptionParser
     logging.basicConfig(level=logging.DEBUG, format="%(asctime)-15s %(levelname)-8s %(name)s@%(filename)s:%(lineno)d %(message)s")
     logger = logging.getLogger("init")
@@ -221,4 +221,6 @@ if __name__ == '__main__':
     except KeyboardInterrupt:
         print("")
         daemon.shutdown()
-    
+
+if __name__ == '__main__':
+    run_cli()
