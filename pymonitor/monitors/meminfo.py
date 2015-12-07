@@ -7,8 +7,8 @@ computed_fields = {
     "mempctfree": lambda items: 1-round((items["memtotal"]-items["memfree"])/items["memtotal"], 2),
     "mempctused_nocache": lambda items: round((items["memtotal"]-items["memfree"]-items["cached"])/items["memtotal"], 2),
     "mempctfree_nocache": lambda items: 1-round((items["memtotal"]-items["memfree"]-items["cached"])/items["memtotal"], 2),
-    "swappctused": lambda items: round((items["swaptotal"]-items["swapfree"])/items["swaptotal"], 2),
-    "swappctfree": lambda items: 1-round((items["swaptotal"]-items["swapfree"])/items["swaptotal"], 2)
+    "swappctused": lambda items: round((items["swaptotal"]-items["swapfree"])/items["swaptotal"] if items["swaptotal"] > 0 else 0, 2),
+    "swappctfree": lambda items: 1-round((items["swaptotal"]-items["swapfree"])/items["swaptotal"] if items["swaptotal"] > 0 else 0, 2)
 }
 
 def meminfo(whitelist=[]):
