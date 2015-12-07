@@ -5,7 +5,7 @@ python-esmonitor
 Quick start
 -----------
 
-* Install: `python3 setup.py install ; pip3 install -r requirements.txt`
+* Install: `pip3 install -r requirements.txt ; python3 setup.py install`
 * Configure: `cd examples ; vim config.json`
 * Run: `pymonitor -c config.json`
  
