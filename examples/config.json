@@ -33,6 +33,11 @@
                     "/home"
                 ]
             }
+        },
+        {
+            "type":"diskio",
+            "freq":"30",
+            "args":{}
         }
     ]
 }
