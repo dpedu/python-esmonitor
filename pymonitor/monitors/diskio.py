@@ -7,6 +7,8 @@ def diskio(disks=[]):
     for disk,stats in diskinfo.items():
         if disks and disk not in disks:
             continue
+        if stats.read_count == 0 and disk not in disks:
+            continue
         stats = {
             "disk": disk,
             "reads_ps": round(stats.read_count/uptime, 2),
