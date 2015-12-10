@@ -11,6 +11,7 @@ def diskio(disks=[]):
             continue
         stats = {
             "disk": disk,
+            "disk.raw": disk,
             "reads_ps": round(stats.read_count/uptime, 2),
             "writes_ps":round(stats.write_count/uptime, 2),
             "read_ps":  round(stats.read_bytes/uptime, 2),
@@ -29,6 +30,10 @@ mapping = {
         "properties": {
             "disk": {
                 "type": "string"
+            },
+            "disk.raw": {
+                "type": "string",
+                "index" : "not_analyzed"
             },
             "reads_ps": {
                 "type": "double"
