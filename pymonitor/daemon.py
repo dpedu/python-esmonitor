@@ -215,7 +215,13 @@ def run_cli():
         sys.exit()
     
     with open(options.config, "r") as c:
-        conf = json.load(c)
+        if options.config[-4:0] == 'json':
+            conf = json.load(c)
+        elif options.config[-4:0] == 'yml':
+            from yaml import load as yaml_load
+            conf = yaml_load(c)
+        else:
+            raise Exception("Invalid config format")
     
     logger.info("starting daemon with conf: %s" % conf)
     

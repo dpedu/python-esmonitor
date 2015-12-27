@@ -44,6 +44,8 @@ The `monitors` key contains a list of monitor modules to run:
 
 The name of the module to run for a monitor is `type`. The `freq` option is the frequency, in seconds, that this monitor will check and report data. If the monitor being used takes any options, they can be passed as a object with the `args` option,
 
+A yaml config can also be used. The data structure must be identical and the filename MUST end in `.yml`.
+
 Developing Modules
 ------------------
 

@@ -1,0 +1,25 @@
+backend:
+  url: 'http://10.0.3.15:9200/'
+monitors:
+- type: uptime
+  freq: '30'
+  args: {}
+- type: load
+  freq: '30'
+  args: {}
+- type: meminfo
+  freq: '30'
+  args: {}
+- type: procs
+  freq: '30'
+  args: {}
+- type: diskspace
+  freq: '30'
+  args:
+    filesystems:
+    - '/'
+    - '/var'
+    - '/home'
+- type: diskio
+  freq: '30'
+  args: {}
