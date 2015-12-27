@@ -4,6 +4,7 @@ from threading import Thread
 from elasticsearch import Elasticsearch
 from time import time,sleep
 from pymonitor.builtins import sysinfo
+import traceback
 import datetime
 import logging
 import json
@@ -175,7 +176,11 @@ class MonitorThread(Thread):
         while self.alive:
             if time() - self.lastRun > self.delay:
                 self.lastRun = time()
-                self.execute(self.config["args"])
+                try:
+                    self.execute(self.config["args"])
+                except:
+                    tb = traceback.format_exc()
+                    print(tb)
             sleep(0.5)
         self.logger.info("scheduler exited")
     
