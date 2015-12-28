@@ -215,9 +215,9 @@ def run_cli():
         sys.exit()
     
     with open(options.config, "r") as c:
-        if options.config[-4:0] == 'json':
+        if options.config[-5:0] == '.json':
             conf = json.load(c)
-        elif options.config[-4:0] == 'yml':
+        elif options.config[-4:0] == '.yml':
             from yaml import load as yaml_load
             conf = yaml_load(c)
         else:
