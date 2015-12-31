@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 from setuptools import setup
-
-__version__ = "0.0.1"
+from pymonitor import __version__
 
 setup(name='pymonitor',
     version=__version__,
