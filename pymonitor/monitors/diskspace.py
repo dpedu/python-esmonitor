@@ -47,5 +47,5 @@ mapping = {
 }
 
 if __name__ == '__main__':
-    for item in diskspace(filesystems=["/", "/tmp/monitor"]):
+    for item in diskspace(filesystems=["/", "/dev"]):
         print(item)

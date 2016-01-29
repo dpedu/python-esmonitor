@@ -64,5 +64,4 @@ mapping = {
 
 if __name__ == '__main__':
     for item in meminfo():
-        for k,v in item.items():
-            print("%s: %s"%(k,v))
+        print(item)

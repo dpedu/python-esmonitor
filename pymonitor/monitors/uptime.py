@@ -14,4 +14,4 @@ mapping = {
 
 if __name__ == '__main__':
     for item in uptime():
-        print(item["uptime"])
+        print(item)

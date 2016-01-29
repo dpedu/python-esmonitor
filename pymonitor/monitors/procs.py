@@ -71,5 +71,5 @@ mapping = {
 }
 
 if __name__ == '__main__':
-    for stats in procs():
-        print("%s procs %s kthreads %s threads" % (stats["procs"], stats["kthreads"], stats["threads"]))
+    for item in procs():
+        print(item)

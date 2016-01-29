@@ -24,5 +24,5 @@ mapping = {
 }
 
 if __name__ == '__main__':
-    for avg in load():
-        print(' '.join([avg["load_1m"], avg["load_5m"], avg["load_15m"]]))
+    for item in load():
+        print(item)
