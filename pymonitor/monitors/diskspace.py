@@ -47,7 +47,22 @@ mapping = {
             "fs.raw": {
                 "type" : "string",
                 "index" : "not_analyzed"
-            }
+            },
+            "inodesmax": {
+                "type": "long"
+            },
+            "inodesfree": {
+                "type": "long"
+            },
+            "inodesused": {
+                "type": "long"
+            },
+            "inodesused_pct": {
+                "type": "double"
+            },
+            "inodesfree_pct": {
+                "type": "double"
+            },
         }
     }
 }
