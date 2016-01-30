@@ -9,7 +9,6 @@ def diskio(disks=[]):
             continue
         if stats.read_count == 0 and disk not in disks:
             continue
-        print("wb ", stats.write_bytes, " wc ", stats.write_count)
         stats = {
             "disk": disk,
             "disk.raw": disk,

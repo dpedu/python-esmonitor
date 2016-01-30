@@ -26,10 +26,10 @@ class MonitorDaemon(Thread):
         
         checkerPath = os.path.dirname(os.path.realpath(__file__))+"/monitors/"
         sys.path.append(checkerPath)
-        logger.info("path %s" % checkerPath)
+        logger.debug("path %s" % checkerPath)
         
         # Create/start all monitoring threads
-        logger.info("creating monitor threads")
+        logger.debug("creating monitor threads")
         for instance in self.config["monitors"]:
             monitor_thread = MonitorThread(instance, self.backend)
             self.threads.append(monitor_thread)
@@ -37,16 +37,16 @@ class MonitorDaemon(Thread):
         
         self.backend.connect()
         
-        logger.info("starting monitor threads")
+        logger.debug("starting monitor threads")
         for monitor_thread in self.threads:
             monitor_thread.start()
         
         # Tear down all threads
-        logger.info("joining monitor threads")
+        logger.debug("joining monitor threads")
         for monitor_thread in self.threads:
             monitor_thread.join()
         
-        logger.info("joined monitor threads")
+        logger.debug("joined monitor threads")
     
     def shutdown(self):
         """
@@ -67,13 +67,13 @@ class Backend:
         
         self.sysinfo = {}
         self.update_sys_info()
-        self.logger.info("running on %(hostname)s (%(ipaddr)s)" % self.sysinfo)
+        self.logger.debug("running on %(hostname)s (%(ipaddr)s)" % self.sysinfo)
     
     def connect(self):
-        self.logger.info("final mapping %s" % self.mapping)
-        self.logger.info("connecting to backend at %s" % self.es_url)
+        self.logger.debug("final mapping %s" % self.mapping)
+        self.logger.debug("connecting to backend at %s" % self.es_url)
         self.es = Elasticsearch([self.es_url])
-        self.logger.info("connected to backend")
+        self.logger.debug("connected to backend")
         self.current_index = ""
         self.check_before_entry()
     
@@ -115,7 +115,7 @@ class Backend:
                 }
             }
             mapping["mappings"].update(self.mapping)
-            self.logger.info("creating index %s with mapping %s" % (indexName, json.dumps(mapping, indent=4)))
+            self.logger.debug("creating index %s with mapping %s" % (indexName, json.dumps(mapping, indent=4)))
             self.es.indices.create(index=indexName, ignore=400, body=mapping)# ignore already exists error
         self.current_index = indexName
     
@@ -137,9 +137,9 @@ class Backend:
         doc.update(data)
         doc["@timestamp"] = datetime.datetime.utcnow().isoformat()
         
-        self.logger.info("logging type %s: %s" % (data_type, doc))
+        self.logger.debug("logging type %s: %s" % (data_type, doc))
         res = self.es.index(index=self.current_index, doc_type=data_type, body=doc)
-        self.logger.info("%s created %s" % (data_type, res["_id"]))
+        self.logger.debug("%s created %s" % (data_type, res["_id"]))
     
 
 class MonitorThread(Thread):
@@ -151,18 +151,18 @@ class MonitorThread(Thread):
         self.config = config
         self.backend = backend
         self.logger = logging.getLogger("monitordaemon.monitorthread.%s"%self.config["type"])
-        self.logger.info("initing worker thread with config %s" % self.config)
+        self.logger.debug("initing worker thread with config %s" % self.config)
         
-        self.logger.info("importing %s" % self.config["type"])
+        self.logger.debug("importing %s" % self.config["type"])
         self.checker_func = getattr(__import__(self.config["type"]), self.config["type"])
-        self.logger.info("checker func %s" % self.checker_func)
+        self.logger.debug("checker func %s" % self.checker_func)
         
         self.mapping = {}
         #try:
         self.mapping.update(__import__(self.config["type"]).mapping)
         #except:
         #    pass
-        self.logger.info("mapping %s" % self.mapping)
+        self.logger.debug("mapping %s" % self.mapping)
         
         self.alive = True
         self.delay = int(self.config["freq"])
@@ -172,7 +172,7 @@ class MonitorThread(Thread):
         """
         Call execute method every x seconds forever
         """
-        self.logger.info("starting scheduler")
+        self.logger.debug("starting scheduler")
         while self.alive:
             if time() - self.lastRun > self.delay:
                 self.lastRun = time()
@@ -180,34 +180,40 @@ class MonitorThread(Thread):
                     self.execute(self.config["args"])
                 except:
                     tb = traceback.format_exc()
-                    print(tb)
+                    self.logger.warning(tb)
             sleep(0.5)
-        self.logger.info("scheduler exited")
+        self.logger.debug("scheduler exited")
     
     def execute(self, args):
         """
         Run the loaded checker function
         """
+        before = time()
         for result in self.checker_func(**args):
-            self.logger.info("result: %s" % (result,))
+            self.logger.debug("result: %s" % (result,))
             self.backend.add_data(self.config["type"], result)
+        duration = time() - before
+        self.logger.info("runtime: %.3f" % duration)
     
     def shutdown(self):
         """
         Tell thread to exit
         """
-        self.logger.info("cancelling scheduler")
+        self.logger.debug("cancelling scheduler")
         self.alive=False
 
 def run_cli():
     from optparse import OptionParser
-    logging.basicConfig(level=logging.DEBUG, format="%(asctime)-15s %(levelname)-8s %(name)s@%(filename)s:%(lineno)d %(message)s")
-    logger = logging.getLogger("init")
     
     parser = OptionParser()
-    parser.add_option("-c", "--config", action="store", type="string", dest="config", help="Path to config file")
+    parser.add_option("-c", "--config",  action="store", type="string", dest="config", help="Path to config file")
+    parser.add_option("-l", "--logging", action="store", dest="logging", help="Logging level", default="INFO", choices=list(logging._nameToLevel.keys()))
     
     (options, args) = parser.parse_args()
+    
+    logging.basicConfig(level=logging._nameToLevel[options.logging], format="%(asctime)-15s %(levelname)-8s %(name)s@%(filename)s:%(lineno)d %(message)s")
+    logger = logging.getLogger("init")
+    
     logger.debug("options: %s" % options)
     
     if options.config == None:
@@ -223,7 +229,7 @@ def run_cli():
         else:
             raise Exception("Invalid config format")
     
-    logger.info("starting daemon with conf: %s" % conf)
+    logger.debug("starting daemon with conf: %s" % conf)
     
     daemon = MonitorDaemon(conf)
     try:
