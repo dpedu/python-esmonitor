@@ -207,11 +207,11 @@ def run_cli():
     
     parser = OptionParser()
     parser.add_option("-c", "--config",  action="store", type="string", dest="config", help="Path to config file")
-    parser.add_option("-l", "--logging", action="store", dest="logging", help="Logging level", default="INFO", choices=list(logging._nameToLevel.keys()))
+    parser.add_option("-l", "--logging", action="store", dest="logging", help="Logging level", default="INFO", choices=['WARN', 'CRITICAL', 'WARNING', 'INFO', 'ERROR', 'DEBUG'])
     
     (options, args) = parser.parse_args()
     
-    logging.basicConfig(level=logging._nameToLevel[options.logging], format="%(asctime)-15s %(levelname)-8s %(name)s@%(filename)s:%(lineno)d %(message)s")
+    logging.basicConfig(level=getattr(logging, options.logging), format="%(asctime)-15s %(levelname)-8s %(name)s@%(filename)s:%(lineno)d %(message)s")
     logger = logging.getLogger("init")
     
     logger.debug("options: %s" % options)
