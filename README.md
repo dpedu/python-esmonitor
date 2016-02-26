@@ -96,3 +96,10 @@ Roadmap
 * Complete API docs
 * More builtin monitors
 * Local logging in case ES can't be reached
+
+Changelog
+---------
+
+*0.1.0:* renamed fields with names containing dots for elasticsearch 2.0 compatibility
+*0.0.1:* initial release!
+

@@ -82,7 +82,7 @@ class Backend:
         Fetch generic system info that is sent with every piece of monitoring data
         """
         self.sysinfo["hostname"] = sysinfo.hostname()
-        self.sysinfo["hostname.raw"] = self.sysinfo["hostname"]
+        self.sysinfo["hostname_raw"] = self.sysinfo["hostname"]
         self.sysinfo["ipaddr"] = sysinfo.ipaddr()
     
     def get_index_name(self):
@@ -106,7 +106,7 @@ class Backend:
                             "hostname": {
                                 "type": "string"
                             },
-                            "hostname.raw": {
+                            "hostname_raw": {
                                 "type" : "string",
                                 "index" : "not_analyzed"
                             }
