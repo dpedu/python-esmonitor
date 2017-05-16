@@ -1,9 +1,30 @@
 from os import statvfs
+import logging
 
 
-def diskspace(filesystems=[]):
-    for fs in filesystems:
-        stats = statvfs(fs)
+def diskspace(filesystems=[], discover=True):
+    """
+    Emit disk space usage statistics for the passed filesystems.
+    :param filesystems: list of mountpoints to gather stats for
+    :param discover: automatically find non-temporary filesystems to gather statistics for. Duplicates from the
+                     filesystems param will be ignored.
+    """
+    filesystems = [f.rstrip("/") for f in filesystems]
+    if discover:
+        with open("/proc/mounts") as f:
+            for line in f.readlines():
+                device, mountpoint, fstype, options, _, _ = line.split(" ")
+                # filter out some mountpoints we probably don't care about space on
+                if any([mountpoint.startswith(prefix) for prefix in ["/sys", "/proc", "/dev", "/run"]]):
+                    continue
+                filesystems.append(mountpoint)
+
+    for fs in set(filesystems):
+        try:
+            stats = statvfs(fs)
+        except FileNotFoundError:
+            logging.warning("filesystem not found: %s", fs)
+            continue
 
         info = {
             "fs": fs,
@@ -71,5 +92,7 @@ mapping = {
 
 
 if __name__ == '__main__':
-    for item in diskspace(filesystems=["/", "/dev"]):
-        print(item)
+    import sys
+    from pprint import pprint
+    for item in diskspace(filesystems=sys.argv[1:]):
+        pprint(item)
