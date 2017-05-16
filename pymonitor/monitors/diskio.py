@@ -1,10 +1,11 @@
 from psutil import disk_io_counters
 
+
 def diskio(disks=[]):
     with open("/proc/uptime", "r") as f:
         uptime = int(float(f.read().split(" ")[0]))
     diskinfo = disk_io_counters(perdisk=True)
-    for disk,stats in diskinfo.items():
+    for disk, stats in diskinfo.items():
         if disks and disk not in disks:
             continue
         if stats.read_count == 0 and disk not in disks:
@@ -12,18 +13,19 @@ def diskio(disks=[]):
         stats = {
             "disk": disk,
             "disk_raw": disk,
-            "reads_ps": round(stats.read_count/uptime, 2),
-            "writes_ps":round(stats.write_count/uptime, 2),
-            "read_ps":  round(stats.read_bytes/uptime, 2),
-            "write_ps": round(stats.write_bytes/uptime, 2),
-            "reads":    stats.read_count,
-            "writes":   stats.write_count,
-            "read":     stats.read_bytes,
-            "written":  stats.write_bytes,
-            "read_size":round(stats.read_bytes/stats.read_count, 2) if stats.read_count > 0 else 0,
-            "write_size":round(stats.write_bytes/stats.write_count, 2) if stats.write_count > 0 else 0
+            "reads_ps": round(stats.read_count / uptime, 2),
+            "writes_ps": round(stats.write_count / uptime, 2),
+            "read_ps": round(stats.read_bytes / uptime, 2),
+            "write_ps": round(stats.write_bytes / uptime, 2),
+            "reads": stats.read_count,
+            "writes": stats.write_count,
+            "read": stats.read_bytes,
+            "written": stats.write_bytes,
+            "read_size": round(stats.read_bytes / stats.read_count, 2) if stats.read_count > 0 else 0,
+            "write_size": round(stats.write_bytes / stats.write_count, 2) if stats.write_count > 0 else 0
         }
         yield(stats)
+
 
 mapping = {
     "diskio": {
@@ -33,7 +35,7 @@ mapping = {
             },
             "disk_raw": {
                 "type": "string",
-                "index" : "not_analyzed"
+                "index": "not_analyzed"
             },
             "reads_ps": {
                 "type": "double"
@@ -72,4 +74,3 @@ mapping = {
 if __name__ == '__main__':
     for item in diskio():
         print(item)
-

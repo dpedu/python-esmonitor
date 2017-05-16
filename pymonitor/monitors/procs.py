@@ -1,11 +1,12 @@
 from glob import glob
 import re
 
+
 KTHREADD_PID = 2
 PAT_REMOVE_PROC_SPACES = re.compile(r'(\([^\)]+\))')
 
+
 def procs():
-    
     # Get uid->name mapping
     users = {}
     with open('/etc/passwd', 'r') as passwd:
@@ -13,9 +14,9 @@ def procs():
             line = passwd.readline()
             if not line:
                 break
-            uname,x,uid,gid,opts,home,shell = line.split(":")
-            users[int(uid)]=uname
-    
+            uname, _, uid, gid, opts, home, shell = line.split(":")
+            users[int(uid)] = uname
+
     # Get gid->groupname mapping
     groups = {}
     with open('/etc/group', 'r') as group:
@@ -23,13 +24,13 @@ def procs():
             line = group.readline()
             if not line:
                 break
-            gname,x,gid,y = line.split(":")
-            groups[int(gid)]=gname
-    
+            gname, _, gid, y = line.split(":")
+            groups[int(gid)] = gname
+
     num_procs = 0
     num_threads = 0
     num_kthreads = 0
-    
+
     for f in glob('/proc/[0-9]*/stat'):
         try:
             with open(f, "r") as statfile:
@@ -38,21 +39,21 @@ def procs():
                 # Fix spaces in process names
                 stat = PAT_REMOVE_PROC_SPACES.sub("PROCNAME", stat)
                 stat = stat.split(" ")
-                
-                proc_id = int(stat[0])
+
                 proc_parent = int(stat[3])
-                
+
                 if proc_parent == KTHREADD_PID:
-                    num_kthreads+=1
+                    num_kthreads += 1
                 else:
-                    num_procs+=1
+                    num_procs += 1
                     num_threads += int(stat[19])
-        
+
         except Exception as e:
             print(e)
             print("Failed to open %s" % f)
-    
-    yield {"procs": num_procs, "threads":num_threads, "kthreads": num_kthreads}
+
+    yield {"procs": num_procs, "threads": num_threads, "kthreads": num_kthreads}
+
 
 mapping = {
     "procs": {
@@ -69,6 +70,7 @@ mapping = {
         }
     }
 }
+
 
 if __name__ == '__main__':
     for item in procs():

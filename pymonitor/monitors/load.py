@@ -4,8 +4,9 @@ def load():
         yield {
             "load_1m": m1,
             "load_5m": m5,
-            "load_15m":m15
+            "load_15m": m15
         }
+
 
 mapping = {
     "load": {
@@ -22,6 +23,7 @@ mapping = {
         }
     }
 }
+
 
 if __name__ == '__main__':
     for item in load():
