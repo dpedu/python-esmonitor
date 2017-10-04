@@ -40,7 +40,7 @@ def ifstats():
 
 
 mapping = {
-    "load": {
+    "ifstats": {
         "properties": {
             "iface": {
                 "type": "string",
