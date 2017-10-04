@@ -2,12 +2,13 @@ from os import statvfs
 import logging
 
 
-def diskspace(filesystems=[], discover=True):
+def diskspace(filesystems=[], discover=True, omit=[]):
     """
     Emit disk space usage statistics for the passed filesystems.
     :param filesystems: list of mountpoints to gather stats for
     :param discover: automatically find non-temporary filesystems to gather statistics for. Duplicates from the
                      filesystems param will be ignored.
+    :param omit: list of paths that, if prefix a discovered mountpoint, to not report on
     """
     filesystems = [f.rstrip("/") for f in filesystems]
     if discover:
@@ -20,6 +21,8 @@ def diskspace(filesystems=[], discover=True):
                 filesystems.append(mountpoint)
 
     for fs in set(filesystems):
+        if any([fs.startswith(i) for i in omit or []]):
+            continue
         try:
             stats = statvfs(fs)
         except FileNotFoundError:
@@ -92,7 +95,6 @@ mapping = {
 
 
 if __name__ == '__main__':
-    import sys
     from pprint import pprint
-    for item in diskspace(filesystems=sys.argv[1:]):
+    for item in diskspace(filesystems=[], discover=True, omit=None):
         pprint(item)
