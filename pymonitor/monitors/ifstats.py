@@ -9,7 +9,10 @@ rx_bytes, rx_packets, rx_errs, rx_drop, rx_fifo, rx_frame, rx_compressed, rx_mul
 previous = defaultdict(lambda: [-1 for i in range(17)])
 
 
-def ifstats():
+def ifstats(omit=[]):
+    """
+    :param omit: list of strings that, if prefix a discovered interface, to not skip
+    """
     with open("/proc/net/dev", "r") as f:
         _, _ = f.readline(), f.readline()
 
@@ -36,6 +39,8 @@ def ifstats():
 
             previous[ifname] = fields + [time()]
 
+            if any([ifname.startswith(i) for i in omit or []]):
+                continue
             yield record
 
 
@@ -43,6 +48,9 @@ mapping = {
     "ifstats": {
         "properties": {
             "iface": {
+                "type": "string",
+            },
+            "iface_raw": {
                 "type": "string",
                 "index": "not_analyzed"
             },
@@ -77,9 +85,9 @@ mapping = {
 
 if __name__ == '__main__':
     from time import sleep
-    for item in ifstats():
+    for item in ifstats(omit=["vm"]):
         print(item)
     print("-")
     sleep(2)
-    for item in ifstats():
+    for item in ifstats(omit=["vm"]):
         print(item)
