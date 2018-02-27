@@ -3,16 +3,16 @@ import re
 memline_pattern = re.compile(r'^(?P<key>[^\\:]+)\:\s+(?P<value>[0-9]+)(\s(?P<unit>[a-zA-Z]+))?')
 
 computed_fields = {
-    "mempctused": lambda items: round((items["memtotal"] - items["memfree"]) / items["memtotal"], 2),
-    "mempctfree": lambda items: 1 - round((items["memtotal"] - items["memfree"]) / items["memtotal"], 2),
+    "mempctused": lambda items: round((items["memtotal"] - items["memfree"]) / items["memtotal"], 5),
+    "mempctfree": lambda items: 1 - round((items["memtotal"] - items["memfree"]) / items["memtotal"], 5),
     "mempctused_nocache": lambda items: round((items["memtotal"] - items["memfree"] - items["cached"]) /
-                                              items["memtotal"], 2),
+                                              items["memtotal"], 5),
     "mempctfree_nocache": lambda items: 1 - round((items["memtotal"] - items["memfree"] - items["cached"]) /
-                                                  items["memtotal"], 2),
+                                                  items["memtotal"], 5),
     "swappctused": lambda items: round((items["swaptotal"] - items["swapfree"]) /
-                                       items["swaptotal"] if items["swaptotal"] > 0 else 0, 2),
+                                       items["swaptotal"] if items["swaptotal"] > 0 else 0, 5),
     "swappctfree": lambda items: 1 - round((items["swaptotal"] - items["swapfree"]) /
-                                           items["swaptotal"] if items["swaptotal"] > 0 else 0, 2)
+                                           items["swaptotal"] if items["swaptotal"] > 0 else 0, 5)
 }
 
 

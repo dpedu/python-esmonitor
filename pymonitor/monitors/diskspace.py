@@ -40,11 +40,11 @@ def diskspace(filesystems=[], discover=True, omit=[]):
             "inodesused": stats.f_files - stats.f_favail
         }
 
-        info["diskpctused"] = round(info["diskused"] / info["disksize"] if info["disksize"] > 0 else 0, 2)
-        info["diskpctfree"] = round(info["diskfree"] / info["disksize"] if info["disksize"] > 0 else 0, 2)
+        info["diskpctused"] = round(info["diskused"] / info["disksize"] if info["disksize"] > 0 else 0, 5)
+        info["diskpctfree"] = round(info["diskfree"] / info["disksize"] if info["disksize"] > 0 else 0, 5)
 
-        info["inodesused_pct"] = round(info["inodesused"] / info["inodesmax"] if info["inodesmax"] > 0 else 0, 2)
-        info["inodesfree_pct"] = round(info["inodesfree"] / info["inodesmax"] if info["inodesmax"] > 0 else 0, 2)
+        info["inodesused_pct"] = round(info["inodesused"] / info["inodesmax"] if info["inodesmax"] > 0 else 0, 5)
+        info["inodesfree_pct"] = round(info["inodesfree"] / info["inodesmax"] if info["inodesmax"] > 0 else 0, 5)
 
         yield info
 
