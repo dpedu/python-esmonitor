@@ -1,3 +1,5 @@
-elasticsearch==2.2.0
+elasticsearch==6.3.1
 psutil==3.3.0
+pymonitor==0.1.5
 PyYAML==3.11
+urllib3==1.23
