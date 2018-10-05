@@ -1,3 +1,4 @@
+from pymonitor import Metric
 from collections import defaultdict
 from time import time
 
@@ -22,8 +23,7 @@ def ifstats(omit=[]):
             for i in range(0, len(fields)):
                 fields[i] = int(fields[i])
 
-            record = {"iface": ifname,
-                      "rx_bytes": fields[rx_bytes],
+            record = {"rx_bytes": fields[rx_bytes],
                       "tx_bytes": fields[tx_bytes],
                       "rx_packets": fields[rx_packets],
                       "tx_packets": fields[tx_packets],
@@ -41,18 +41,17 @@ def ifstats(omit=[]):
 
             if any([ifname.startswith(i) for i in omit or []]):
                 continue
-            yield record
+            yield Metric(record, {"iface": ifname})
 
 
 mapping = {
     "ifstats": {
         "properties": {
             "iface": {
-                "type": "string",
+                "type": "string"
             },
             "iface_raw": {
-                "type": "string",
-                "index": "not_analyzed"
+                "type": "keyword"
             },
             "rx_bytes": {
                 "type": "long"

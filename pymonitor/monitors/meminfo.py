@@ -1,3 +1,4 @@
+from pymonitor import Metric
 import re
 
 memline_pattern = re.compile(r'^(?P<key>[^\\:]+)\:\s+(?P<value>[0-9]+)(\s(?P<unit>[a-zA-Z]+))?')
@@ -10,9 +11,9 @@ computed_fields = {
     "mempctfree_nocache": lambda items: 1 - round((items["memtotal"] - items["memfree"] - items["cached"]) /
                                                   items["memtotal"], 5),
     "swappctused": lambda items: round((items["swaptotal"] - items["swapfree"]) /
-                                       items["swaptotal"] if items["swaptotal"] > 0 else 0, 5),
+                                       items["swaptotal"] if items["swaptotal"] > 0 else 0.0, 5),
     "swappctfree": lambda items: 1 - round((items["swaptotal"] - items["swapfree"]) /
-                                           items["swaptotal"] if items["swaptotal"] > 0 else 0, 5)
+                                           items["swaptotal"] if items["swaptotal"] > 0 else 0.0, 5)
 }
 
 
@@ -43,29 +44,25 @@ def meminfo(whitelist=[]):
         for key in computed_fields:
             result[key] = computed_fields[key](result)
 
-    yield result
+    yield Metric(result)
 
 
 mapping = {
-    "meminfo": {
-        "properties": {
-            "swaptotal": {"type": "long"},
-            "swapfree": {"type": "long"},
-            "swapcached": {"type": "long"},
-            "memtotal": {"type": "long"},
-            "memfree": {"type": "long"},
-            "memavailable": {"type": "long"},
-            "cached": {"type": "long"},
-            "active": {"type": "long"},
-            "inactive": {"type": "long"},
-            "mempctused": {"type": "double"},
-            "mempctfree": {"type": "double"},
-            "mempctused_nocache": {"type": "double"},
-            "mempctfree_nocache": {"type": "double"},
-            "swappctused": {"type": "double"},
-            "swappctfree": {"type": "double"}
-        }
-    }
+    "swaptotal": {"type": "long"},
+    "swapfree": {"type": "long"},
+    "swapcached": {"type": "long"},
+    "memtotal": {"type": "long"},
+    "memfree": {"type": "long"},
+    "memavailable": {"type": "long"},
+    "cached": {"type": "long"},
+    "active": {"type": "long"},
+    "inactive": {"type": "long"},
+    "mempctused": {"type": "double"},
+    "mempctfree": {"type": "double"},
+    "mempctused_nocache": {"type": "double"},
+    "mempctfree_nocache": {"type": "double"},
+    "swappctused": {"type": "double"},
+    "swappctfree": {"type": "double"}
 }
 
 

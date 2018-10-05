@@ -9,5 +9,9 @@ setup(name='pymonitor',
     author='dpedu',
     author_email='dave@davepedu.com',
     packages=['pymonitor', 'pymonitor.builtins', 'pymonitor.monitors'],
-    scripts=['bin/pymonitor'],
+    entry_points={
+        "console_scripts": [
+            "pymonitor = pymonitor.daemon:main"
+        ]
+    },
     zip_safe=False)

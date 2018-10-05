@@ -1,0 +1,27 @@
+backend:
+  type: influxdb
+  host: 10.0.0.10
+  port: 8086
+  user: root
+  password: root
+  database: monitoring
+monitors:
+- type: uptime
+  freq: 30
+  args: {}
+- type: load
+  freq: 30
+  args: {}
+- type: meminfo
+  freq: 30
+  args: {}
+- type: diskspace
+  freq: 30
+  args:
+    filesystems:
+    - '/'
+    - '/var'
+    - '/home'
+- type: diskio
+  freq: 30
+  args: {}

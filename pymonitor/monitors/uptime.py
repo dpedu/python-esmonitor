@@ -1,17 +1,12 @@
+from pymonitor import Metric
+
+
 def uptime():
     with open("/proc/uptime", "r") as f:
-        yield {"uptime": int(float(f.read().split(" ")[0]))}
+        yield Metric({"uptime": int(float(f.read().split(" ")[0]))})
 
 
-mapping = {
-    "uptime": {
-        "properties": {
-            "uptime": {
-                "type": "integer"
-            }
-        }
-    }
-}
+mapping = {"uptime": {"type": "integer"}}
 
 
 if __name__ == '__main__':

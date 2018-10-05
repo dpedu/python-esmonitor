@@ -1,3 +1,4 @@
+from pymonitor import Metric
 from os import statvfs
 import logging
 
@@ -10,7 +11,7 @@ def diskspace(filesystems=[], discover=True, omit=[]):
                      filesystems param will be ignored.
     :param omit: list of paths that, if prefix a discovered mountpoint, to not report on
     """
-    filesystems = [f.rstrip("/") for f in filesystems]
+    filesystems = [f.rstrip("/") if f != "/" else f for f in filesystems]
     if discover:
         with open("/proc/mounts") as f:
             for line in f.readlines():
@@ -26,12 +27,10 @@ def diskspace(filesystems=[], discover=True, omit=[]):
         try:
             stats = statvfs(fs)
         except FileNotFoundError:
-            logging.warning("filesystem not found: %s", fs)
+            logging.warning("filesystem not found: %s", repr(fs))
             continue
 
         info = {
-            "fs": fs,
-            "fs_raw": fs,
             "diskfree": stats.f_bsize * stats.f_bavail,
             "diskused": (stats.f_blocks - stats.f_bavail) * stats.f_bsize,
             "disksize": stats.f_bsize * stats.f_blocks,
@@ -40,56 +39,51 @@ def diskspace(filesystems=[], discover=True, omit=[]):
             "inodesused": stats.f_files - stats.f_favail
         }
 
-        info["diskpctused"] = round(info["diskused"] / info["disksize"] if info["disksize"] > 0 else 0, 5)
-        info["diskpctfree"] = round(info["diskfree"] / info["disksize"] if info["disksize"] > 0 else 0, 5)
+        info["diskpctused"] = round(info["diskused"] / info["disksize"] if info["disksize"] > 0 else 0.0, 5)
+        info["diskpctfree"] = round(info["diskfree"] / info["disksize"] if info["disksize"] > 0 else 0.0, 5)
 
-        info["inodesused_pct"] = round(info["inodesused"] / info["inodesmax"] if info["inodesmax"] > 0 else 0, 5)
-        info["inodesfree_pct"] = round(info["inodesfree"] / info["inodesmax"] if info["inodesmax"] > 0 else 0, 5)
+        info["inodesused_pct"] = round(info["inodesused"] / info["inodesmax"] if info["inodesmax"] > 0 else 0.0, 5)
+        info["inodesfree_pct"] = round(info["inodesfree"] / info["inodesmax"] if info["inodesmax"] > 0 else 0.0, 5)
 
-        yield info
+        yield Metric(info, {"fs": fs})
 
 
 mapping = {
-    "diskspace": {
-        "properties": {
-            "diskfree": {
-                "type": "long"
-            },
-            "diskused": {
-                "type": "long"
-            },
-            "disksize": {
-                "type": "long"
-            },
-            "diskpctused": {
-                "type": "double"
-            },
-            "diskpctfree": {
-                "type": "double"
-            },
-            "fs": {
-                "type": "string"
-            },
-            "fs_raw": {
-                "type": "string",
-                "index": "not_analyzed"
-            },
-            "inodesmax": {
-                "type": "long"
-            },
-            "inodesfree": {
-                "type": "long"
-            },
-            "inodesused": {
-                "type": "long"
-            },
-            "inodesused_pct": {
-                "type": "double"
-            },
-            "inodesfree_pct": {
-                "type": "double"
-            },
-        }
+    "diskfree": {
+        "type": "long"
+    },
+    "diskused": {
+        "type": "long"
+    },
+    "disksize": {
+        "type": "long"
+    },
+    "diskpctused": {
+        "type": "double"
+    },
+    "diskpctfree": {
+        "type": "double"
+    },
+    "fs": {
+        "type": "text"
+    },
+    "fs_raw": {
+        "type": "keyword"
+    },
+    "inodesmax": {
+        "type": "long"
+    },
+    "inodesfree": {
+        "type": "long"
+    },
+    "inodesused": {
+        "type": "long"
+    },
+    "inodesused_pct": {
+        "type": "double"
+    },
+    "inodesfree_pct": {
+        "type": "double"
     }
 }
 

@@ -1,3 +1,4 @@
+from pymonitor import Metric
 from glob import glob
 import re
 
@@ -52,7 +53,7 @@ def procs():
             print(e)
             print("Failed to open %s" % f)
 
-    yield {"procs": num_procs, "threads": num_threads, "kthreads": num_kthreads}
+    yield Metric({"procs": num_procs, "threads": num_threads, "kthreads": num_kthreads})
 
 
 mapping = {
